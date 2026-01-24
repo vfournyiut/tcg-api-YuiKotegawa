@@ -67,8 +67,6 @@ model DeckCard {
   cardId    Int
   deck      Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
   card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   // @@unique([deckId, cardId]) A décommenter si les doublons dans un deck sont interdits
 }
