@@ -58,6 +58,20 @@ async function main() {
 
     console.log(`✅ Created ${pokemonData.length} Pokemon cards`);
 
+    const redDeck = await prisma.deck.create({
+        data: {
+            name: "Starter Deck",
+            userId: redUser.id,
+        },
+    });
+
+    const blueDeck = await prisma.deck.create({
+        data: {
+            name: "Starter Deck",
+            userId: blueUser.id,
+        },
+    });
+
     console.log("\n🎉 Database seeding completed!");
 }
 
