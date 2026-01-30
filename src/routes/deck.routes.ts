@@ -94,6 +94,14 @@ deckRouter.patch("/:id", authenticateToken, async (req: UpdateDeckRequest, res: 
             return res.status(400).json("A deck must contain exactly 10 cards");
         }
 
+        const deck = await prisma.deck.findFirst({
+            where: {userId, id: deckId}
+        });
+
+        if (!deck) {
+            return res.status(404).json({error: "Deck not found"});
+        }
+
         const updatedDeck = await prisma.deck.update({
             where: {userId, id:deckId},
             data: {
@@ -107,10 +115,7 @@ deckRouter.patch("/:id", authenticateToken, async (req: UpdateDeckRequest, res: 
                 }
             });
         return res.status(200).json("Deck updated successfully" + updatedDeck);
-    } catch (error: any) {
-        if (error.code === 'P2025') {
-            return res.status(404).json({error: "Deck not found"});
-        }
+    } catch (error) {
         return res.status(500).json({error: "Internal server error"});
     }
 });
@@ -125,15 +130,20 @@ deckRouter.delete("/:id", authenticateToken, async (req: Request, res: Response)
             return res.status(400).json("Invalid deck ID");
         }
 
+        const deck = await prisma.deck.findFirst({
+            where: {userId, id: deckId}
+        });
+
+        if (!deck) {
+            return res.status(404).json({error: "Deck not found"});
+        }
+
         await prisma.deck.delete({
             where: {userId, id:deckId},
         });
         return res.status(200).json("Deck deleted successfully"); 
     }
-    catch (error: any) {
-        if (error.code === 'P2025') {
-            return res.status(404).json({error: "Deck not found"});
-        }
+    catch (error) {
         return res.status(500).json({error: "Internal server error"});
     }
 });
