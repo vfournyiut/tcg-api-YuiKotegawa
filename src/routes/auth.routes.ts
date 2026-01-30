@@ -1,12 +1,13 @@
-import {Router, Request, Response} from "express";
+import {Router, Response} from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import {prisma} from "../database";
 import {env} from "../env";
+import {SignUpRequest, SignInRequest} from "../types/auth.types";
 
 export const authRouter = Router();
 
-authRouter.post("/sign-up", async (req: Request, res: Response) => {
+authRouter.post("/sign-up", async (req: SignUpRequest, res: Response) => {
     try {
         const {email, username, password} = req.body;
 
@@ -38,7 +39,7 @@ authRouter.post("/sign-up", async (req: Request, res: Response) => {
     }
 });
 
-authRouter.post("/sign-in", async (req: Request, res: Response) => {
+authRouter.post("/sign-in", async (req: SignInRequest, res: Response) => {
     try {
         const {email, password} = req.body;
 
@@ -68,4 +69,5 @@ authRouter.post("/sign-in", async (req: Request, res: Response) => {
         return res.status(500).json({error: "Internal server error"});
     }
 });
+
 
