@@ -1,7 +1,7 @@
 import {Response, NextFunction} from "express";
 import jwt from "jsonwebtoken";
 import {env} from "../env";
-import { JWTRequest } from "../types/auth.types";
+import { AuthenticatedRequest } from "../types/auth.types";
 
 export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
@@ -19,6 +19,7 @@ export const authenticateToken = (req: AuthenticatedRequest, res: Response, next
         return res.status(401).json({error: "Invalid or expired token"});
     }
 };
+
 
 
 
