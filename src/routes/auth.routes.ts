@@ -29,12 +29,12 @@ authRouter.post("/sign-up", async (req: Request, res: Response) => {
             expiresIn: "7d",
         });
 
-        res.status(201).json({
+        return res.status(201).json({
             token,
             user: {id: user.id, email: user.email, username: user.username},
         });
     } catch (error) {
-        res.status(500).json({error: "Internal server error"});
+        return res.status(500).json({error: "Internal server error"});
     }
 });
 
@@ -60,11 +60,12 @@ authRouter.post("/sign-in", async (req: Request, res: Response) => {
             expiresIn: "7d",
         });
 
-        res.status(200).json({
+        return res.status(200).json({
             token,
             user: {id: user.id, email: user.email, username: user.username},
         });
     } catch (error) {
-        res.status(500).json({error: "Internal server error"});
+        return res.status(500).json({error: "Internal server error"});
     }
 });
+
