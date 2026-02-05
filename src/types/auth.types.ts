@@ -11,13 +11,7 @@ export interface SignInRequestBody {
         password: string;
     };
 
-export interface JWTRequestBody {
-        userId: number;
-        email: string;
-}
-
 export type SignUpRequest = Request<{}, any, SignUpRequestBody>;
 
 export type SignInRequest = Request<{}, any, SignInRequestBody>;
 
-export type JWTRequest = Request<{}, any, JWTRequestBody>;
