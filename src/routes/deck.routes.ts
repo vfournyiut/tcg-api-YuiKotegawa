@@ -20,9 +20,8 @@ export const deckRouter = Router();
  */
 deckRouter.post("/", authenticateToken, async (req: CreateDeckRequest, res: Response) => {
     try {
-        const name = req.body.name;
         const userId = req.user!.userId;
-        const cards = req.body.cards;
+        const { name, cards } = req.body;
 
         if (!name) {
             return res.status(400).json("Missing deck name");
@@ -205,4 +204,5 @@ deckRouter.delete("/:id", authenticateToken, async (req: Request, res: Response)
         return res.status(500).json({error: "Internal server error"});
     }
 });
+
 
