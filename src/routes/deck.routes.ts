@@ -6,10 +6,23 @@ import {CreateDeckRequest, UpdateDeckRequest} from "../types/deck.types";
 
 export const deckRouter = Router();
 
+/**
+ * Create a new deck
+ * Creates a new deck for the authenticated user.
+ * Requires authentication.
+ * @param {CreateDeckRequest} req - Express request object
+ * @param {string} req.body.name - Deck name
+ * @param {number[]} req.body.cards - Array of exactly 10 card IDs
+ * @param {Response} res - Express response object
+ * @returns {string} Success message
+ * @throws {400} Missing fields or invalid number of cards
+ * @throws {500} Internal server error
+ */
 deckRouter.post("/", authenticateToken, async (req: CreateDeckRequest, res: Response) => {
     try {
-        const { name, cards } = req.body;
+        const name = req.body.name;
         const userId = req.user!.userId;
+        const cards = req.body.cards;
 
         if (!name) {
             return res.status(400).json("Missing deck name");
@@ -35,6 +48,15 @@ deckRouter.post("/", authenticateToken, async (req: CreateDeckRequest, res: Resp
     }
 });
 
+/**
+ * Get user's decks
+ * Returns all decks belonging to the authenticated user.
+ * Requires authentication.
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @returns {Array} Array of user's decks (id and name only)
+ * @throws {500} Internal server error
+ */
 deckRouter.get("/mine", authenticateToken, async (req: Request, res: Response) => {
     try {
         const userId = req.user!.userId;
@@ -51,6 +73,18 @@ deckRouter.get("/mine", authenticateToken, async (req: Request, res: Response) =
     }
 });
 
+/**
+ * Get deck by ID
+ * Returns a specific deck belonging to the authenticated user.
+ * Requires authentication.
+ * @param {Request} req - Express request object
+ * @param {string} req.params.id - Deck ID
+ * @param {Response} res - Express response object
+ * @returns {Object} Deck details
+ * @throws {400} Invalid deck ID
+ * @throws {404} Deck not found
+ * @throws {500} Internal server error
+ */
 deckRouter.get("/:id", authenticateToken, async (req: Request, res: Response) => {
     try {
         const userId = req.user!.userId;
@@ -75,6 +109,20 @@ deckRouter.get("/:id", authenticateToken, async (req: Request, res: Response) =>
 }
 );
 
+/**
+ * Update deck
+ * Updates a specific deck belonging to the authenticated user.
+ * Requires authentication.
+ * @param {UpdateDeckRequest} req - Express request object
+ * @param {string} req.params.id - Deck ID
+ * @param {string} req.body.name - New deck name
+ * @param {number[]} req.body.cards - New array of exactly 10 card IDs
+ * @param {Response} res - Express response object
+ * @returns {string} Success message
+ * @throws {400} Invalid deck ID, missing fields or invalid number of cards
+ * @throws {404} Deck not found
+ * @throws {500} Internal server error
+ */
 deckRouter.patch("/:id", authenticateToken, async (req: UpdateDeckRequest, res: Response) => {
     try {
         const userId = req.user!.userId;
@@ -119,7 +167,18 @@ deckRouter.patch("/:id", authenticateToken, async (req: UpdateDeckRequest, res: 
     }
 });
 
-
+/**
+ * Delete deck
+ * Deletes a specific deck belonging to the authenticated user.
+ * Requires authentication.
+ * @param {Request} req - Express request object
+ * @param {string} req.params.id - Deck ID
+ * @param {Response} res - Express response object
+ * @returns {string} Success message
+ * @throws {400} Invalid deck ID
+ * @throws {404} Deck not found
+ * @throws {500} Internal server error
+ */
 deckRouter.delete("/:id", authenticateToken, async (req: Request, res: Response) => {
     try {
         const userId = req.user!.userId;
@@ -146,5 +205,4 @@ deckRouter.delete("/:id", authenticateToken, async (req: Request, res: Response)
         return res.status(500).json({error: "Internal server error"});
     }
 });
-
 
