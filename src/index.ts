@@ -6,6 +6,8 @@ import {authRouter} from "./routes/auth.routes";
 import {cardRouter} from "./routes/card.routes";
 import {deckRouter} from "./routes/deck.routes";
 
+import swaggerUi from "swagger-ui-express";
+import {swaggerSpec} from "./swagger/config";
 
 // Create Express app
 export const app = express();
@@ -23,6 +25,12 @@ app.use(express.json());
 // Serve static files (Socket.io test client)
 app.use(express.static('public'));
 
+// Swagger documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: "TCG API Documentation"
+}));
+
 // Health check endpoint
 app.get("/api/health", (_req, res) => {
     res.json({status: "ok", message: "TCG Backend Server is running"});
@@ -30,7 +38,7 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use('/api/cards', cardRouter);
-app.use('/api/decks', deckRouter);
+app.use("/api/decks", deckRouter);
 
 // Start server only if this file is run directly (not imported for tests)
 if (require.main === module) {

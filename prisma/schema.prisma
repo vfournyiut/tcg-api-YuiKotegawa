@@ -70,6 +70,3 @@ model DeckCard {
 
   // @@unique([deckId, cardId]) A décommenter si les doublons dans un deck sont interdits
 }
-
-
-

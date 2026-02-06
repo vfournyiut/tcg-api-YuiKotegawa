@@ -14,4 +14,3 @@ export interface SignInRequestBody {
 export type SignUpRequest = Request<{}, any, SignUpRequestBody>;
 
 export type SignInRequest = Request<{}, any, SignInRequestBody>;
-
