@@ -3,6 +3,15 @@ import {Request} from "express";
 import jwt from "jsonwebtoken";
 import {env} from "../env";
 
+/**
+ * Authentication Middleware
+ * Verifies JWT token from Authorization header and attaches user info to request object.
+ * @param {Request} req - Express request object 
+ * @param {Response} res - Express response object 
+ * @param {NextFunction} next - Next middleware function
+ * @returns {void} calls next() (meaning it proceeds to the next middleware) if token is valid
+ * @throws {401} if no token is provided, or if token provided is invalid/expired
+ */
 export const authenticateToken = (req: Request<any, any, any>, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(" ")[1];
@@ -19,6 +28,7 @@ export const authenticateToken = (req: Request<any, any, any>, res: Response, ne
         return res.status(401).json({error: "Invalid or expired token"});
     }
 };
+
 
 
 
