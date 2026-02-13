@@ -1,0 +1,374 @@
+paths:
+  /api/decks:
+    post:
+      tags:
+        - Decks
+      summary: Créer un nouveau deck
+      description: |
+        Crée un nouveau deck pour l'utilisateur authentifié.
+        
+        **Règles de validation :**
+        - Nécessite une authentification (token JWT)
+        - Le deck doit contenir exactement 10 cartes
+        - Le nom du deck est obligatoire
+        - Les cartes peuvent être dupliquées
+      operationId: createDeck
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - cards
+              properties:
+                name:
+                  type: string
+                  example: "Mon deck eau"
+                  description: Nom du deck
+                cards:
+                  type: array
+                  items:
+                    type: integer
+                  minItems: 10
+                  maxItems: 10
+                  example: [7, 8, 9, 54, 55, 60, 61, 62, 72, 86]
+                  description: Liste de 10 IDs de cartes
+      responses:
+        '201':
+          description: Deck créé avec succès
+          content:
+            application/json:
+              schema:
+                type: string
+              example: "deck created successfully :Mon deck eau"
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                type: string
+              examples:
+                missingName:
+                  value: "Missing deck name"
+                  summary: Nom manquant
+                invalidCards:
+                  value: "A deck must contain exactly 10 cards"
+                  summary: Nombre de cartes incorrect
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Unauthorized"
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Internal server error"
+
+  /api/decks/mine:
+    get:
+      tags:
+        - Decks
+      summary: Récupérer mes decks
+      description: |
+        Récupère la liste de tous les decks appartenant à l'utilisateur authentifié.
+        
+        **Réponse :**
+        - Retourne uniquement l'ID et le nom de chaque deck
+        - Nécessite une authentification
+      operationId: getMyDecks
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Liste des decks récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeckSummary'
+              example:
+                - id: 1
+                  name: "Mon deck eau"
+                - id: 2
+                  name: "Mon deck feu"
+                - id: 3
+                  name: "Mon deck électrique"
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Unauthorized"
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Internal server error"
+
+  /api/decks/{id}:
+    get:
+      tags:
+        - Decks
+      summary: Récupérer un deck par ID
+      description: |
+        Récupère les détails d'un deck spécifique appartenant à l'utilisateur authentifié.
+        
+        **Sécurité :**
+        - Seul le propriétaire peut voir son deck
+        - Retourne 404 si le deck n'existe pas ou n'appartient pas à l'utilisateur
+      operationId: getDeckById
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID du deck
+          example: 1
+      responses:
+        '200':
+          description: Deck récupéré avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeckWithCards'
+              example:
+                id: 1
+                name: "Mon deck eau"
+                userId: 1
+                cards:
+                  - id: 1
+                    deckId: 1
+                    cardId: 7
+                  - id: 2
+                    deckId: 1
+                    cardId: 8
+                  - id: 3
+                    deckId: 1
+                    cardId: 9
+                  - id: 4
+                    deckId: 1
+                    cardId: 54
+                  - id: 5
+                    deckId: 1
+                    cardId: 55
+                  - id: 6
+                    deckId: 1
+                    cardId: 60
+                  - id: 7
+                    deckId: 1
+                    cardId: 61
+                  - id: 8
+                    deckId: 1
+                    cardId: 62
+                  - id: 9
+                    deckId: 1
+                    cardId: 72
+                  - id: 10
+                    deckId: 1
+                    cardId: 86
+        '400':
+          description: ID invalide
+          content:
+            application/json:
+              schema:
+                type: string
+              example: "Invalid deck ID"
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Unauthorized"
+        '404':
+          description: Deck non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Deck not found"
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Internal server error"
+
+    patch:
+      tags:
+        - Decks
+      summary: Modifier un deck
+      description: |
+        Modifie un deck existant appartenant à l'utilisateur authentifié.
+        
+        **Modifications possibles :**
+        - Changer le nom du deck
+        - Remplacer complètement la liste des cartes (10 cartes exactement)
+        - Seul le propriétaire peut modifier son deck
+      operationId: updateDeck
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID du deck à modifier
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - cards
+              properties:
+                name:
+                  type: string
+                  example: "Mon nouveau deck eau"
+                  description: Nouveau nom du deck
+                cards:
+                  type: array
+                  items:
+                    type: integer
+                  minItems: 10
+                  maxItems: 10
+                  example: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                  description: Nouvelle liste de 10 IDs de cartes
+      responses:
+        '200':
+          description: Deck modifié avec succès
+          content:
+            application/json:
+              schema:
+                type: string
+              example: "Deck updated successfully[object Object]"
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                type: string
+              examples:
+                invalidId:
+                  value: "Invalid deck ID"
+                  summary: ID invalide
+                missingName:
+                  value: "Missing deck name"
+                  summary: Nom manquant
+                invalidCards:
+                  value: "A deck must contain exactly 10 cards"
+                  summary: Nombre de cartes incorrect
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Unauthorized"
+        '404':
+          description: Deck non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Deck not found"
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Internal server error"
+
+    delete:
+      tags:
+        - Decks
+      summary: Supprimer un deck
+      description: |
+        Supprime définitivement un deck appartenant à l'utilisateur authentifié.
+        
+        **Attention :**
+        - Cette action est irréversible
+        - Seul le propriétaire peut supprimer son deck
+        - Les cartes du deck ne sont pas supprimées
+      operationId: deleteDeck
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID du deck à supprimer
+          example: 1
+      responses:
+        '200':
+          description: Deck supprimé avec succès
+          content:
+            application/json:
+              schema:
+                type: string
+              example: "Deck deleted successfully"
+        '400':
+          description: ID invalide
+          content:
+            application/json:
+              schema:
+                type: string
+              example: "Invalid deck ID"
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Unauthorized"
+        '404':
+          description: Deck non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Deck not found"
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Internal server error"

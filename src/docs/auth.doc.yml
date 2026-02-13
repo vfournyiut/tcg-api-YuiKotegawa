@@ -1,0 +1,151 @@
+paths:
+  /api/auth/sign-up:
+    post:
+      tags:
+        - Authentication
+      summary: Créer un nouveau compte
+      description: |
+        Crée un nouveau compte utilisateur et retourne un token JWT.
+        
+        **⚠️ IMPORTANT : Copiez le token de la réponse pour l'utiliser avec "Authorize" !**
+        
+        **Règles de validation :**
+        - Email doit être unique
+        - Tous les champs sont obligatoires
+        - Le mot de passe est hashé avec bcrypt
+      operationId: signUp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - username
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "blue@pokemon.com"
+                  description: Adresse email unique
+                username:
+                  type: string
+                  example: "Blue"
+                  description: Nom d'utilisateur
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+                  description: Mot de passe (sera hashé)
+      responses:
+        '201':
+          description: Compte créé avec succès - ⚠️ COPIEZ LE TOKEN !
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+              example:
+                token: "EXEMPLE_SEULEMENT_PAS_UN_VRAI_TOKEN"
+                user:
+                  id: 1
+                  email: "blue@pokemon.com"
+                  username: "Blue"
+        '400':
+          description: Champs manquants
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Missing required fields"
+        '409':
+          description: Email déjà utilisé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Email already in use"
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Internal server error"
+
+  /api/auth/sign-in:
+    post:
+      tags:
+        - Authentication
+      summary: Se connecter
+      description: |
+        Authentifie un utilisateur existant et retourne un token JWT.
+        
+        **⚠️ IMPORTANT : Copiez le token de la réponse pour l'utiliser avec "Authorize" !**
+        
+        **Token JWT :**
+        - Valide pendant 7 jours
+        - Contient userId et email
+        - À utiliser dans le header Authorization: Bearer <token>
+      operationId: signIn
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "blue@pokemon.com"
+                  description: Adresse email du compte
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+                  description: Mot de passe du compte
+      responses:
+        '200':
+          description: Connexion réussie - ⚠️ COPIEZ LE TOKEN !
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+              example:
+                token: "UTILISEZ_LA_VRAIE_REPONSE_PAS_CET_EXEMPLE"
+                user:
+                  id: 1
+                  email: "blue@pokemon.com"
+                  username: "Blue"
+        '400':
+          description: Champs manquants
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Missing required fields"
+        '401':
+          description: Identifiants invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Invalid credentials"
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Internal server error"
