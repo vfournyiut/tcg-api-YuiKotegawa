@@ -7,56 +7,7 @@ import {SignUpRequest, SignInRequest} from "../types/auth.types";
 
 export const authRouter = Router();
 
-/**
- * @swagger
- * /api/auth/sign-up:
- *   post:
- *     summary: Créer un nouveau compte utilisateur
- *     tags: [Authentication]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/SignUpRequest'
- *     responses:
- *       201:
- *         description: Compte créé avec succès
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthResponse'
- *             example:
- *               token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
- *               user:
- *                 id: 1
- *                 email: "blue@example.com"
- *                 username: "blue"
- *       400:
- *         description: Champs requis manquants
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *             example:
- *               error: "Missing required fields"
- *       409:
- *         description: Email déjà utilisé
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *             example:
- *               error: "Email already in use"
- *       500:
- *         description: Erreur serveur
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *             example:
- *               error: "Internal server error"
- */
+
 /**
  * User Sign-up
  * Creates a new user and returns a JWT token upon successful registration.
@@ -102,56 +53,7 @@ authRouter.post("/sign-up", async (req: SignUpRequest, res: Response) => {
     }
 });
 
-/**
- * @swagger
- * /api/auth/sign-in:
- *   post:
- *     summary: Se connecter avec un compte existant
- *     tags: [Authentication]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/SignInRequest'
- *     responses:
- *       200:
- *         description: Connexion réussie
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthResponse'
- *             example:
- *               token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
- *               user:
- *                 id: 1
- *                 email: "blue@example.com"
- *                 username: "blue"
- *       400:
- *         description: Champs requis manquants
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *             example:
- *               error: "Missing required fields"
- *       401:
- *         description: Identifiants invalides
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *             example:
- *               error: "Invalid credentials"
- *       500:
- *         description: Erreur serveur
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *             example:
- *               error: "Internal server error"
- */
+
 /**
  * User Sign-in
  * Authenticates an existing user and returns a JWT token if login is successful.
