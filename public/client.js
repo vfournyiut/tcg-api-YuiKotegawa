@@ -100,8 +100,8 @@ function getRooms() {
 
 function createRoom() {
     if (!socket) return alert('Not connected');
-    const deckId = document.getElementById('createRoomDeckId').value;
-    if (!deckId) return alert('Deck ID required');
+    const deckId = parseInt(document.getElementById('createRoomDeckId').value);
+    if (!deckId || isNaN(deckId)) return alert('Deck ID required (must be a number)');
 
     const data = {deckId};
     log(`➡️ createRoom: ${JSON.stringify(data)}`, 'sent');
@@ -110,9 +110,9 @@ function createRoom() {
 
 function joinRoom() {
     if (!socket) return alert('Not connected');
-    const roomId = document.getElementById('joinRoomId').value;
-    const deckId = document.getElementById('joinRoomDeckId').value;
-    if (!roomId || !deckId) return alert('Room ID and Deck ID required');
+    const roomId = parseInt(document.getElementById('joinRoomId').value);
+    const deckId = parseInt(document.getElementById('joinRoomDeckId').value);
+    if (!roomId || isNaN(roomId) || !deckId || isNaN(deckId)) return alert('Room ID and Deck ID required (must be numbers)');
 
     const data = {roomId, deckId};
     log(`➡️ joinRoom: ${JSON.stringify(data)}`, 'sent');
