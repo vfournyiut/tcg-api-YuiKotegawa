@@ -1,8 +1,9 @@
 import yaml from 'js-yaml'
 import { readFileSync } from 'fs'
 import { join } from 'path'
+
 const loadYaml = (filename: string) => {
-    const filePath = join(__dirname, filename)
+    const filePath = join(process.cwd(), 'src', 'docs', filename)
     const fileContent = readFileSync(filePath, 'utf8')
     return yaml.load(fileContent) as any
 }

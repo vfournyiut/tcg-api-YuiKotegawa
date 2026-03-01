@@ -1,15 +1,16 @@
-import { createServer } from 'http'
-import { env } from './env'
-import express from 'express'
-import cors from 'cors'
+import { env } from "./env";
+import express from "express";
+import cors from "cors";
 import swaggerUi from 'swagger-ui-express'
-import { authRouter } from './routes/auth.routes'
-import { cardRouter } from './routes/card.routes'
-import { deckRouter } from './routes/deck.routes'
+import { authRouter } from "./routes/auth.routes";
+import { cardRouter } from "./routes/card.routes";
+import { deckRouter } from "./routes/deck.routes";
 import { swaggerDocument } from './docs'
+import * as http from 'node:http'
+import { ChatServer } from "./socket/ChatServer";
 
 // Create Express app
-export const app = express()
+export const app = express();
 
 // Middlewares
 app.use(
@@ -47,18 +48,22 @@ app.use('/api/auth', authRouter)
 app.use('/api/cards', cardRouter)
 app.use('/api/decks', deckRouter)
 
-// Start server only if this file is run directly (not imported for tests)
-if (require.main === module) {
-  // Create HTTP server
-  const httpServer = createServer(app)
+// Create HTTP Server
+export const server = http.createServer(app)
 
+// Initialiser le serveur de chat avec Socket.io (inclut l'authentification)
+new ChatServer(server)
+
+// Start server only if not in test environment
+if (process.env.NODE_ENV !== 'test') {
   // Start server
   try {
-    httpServer.listen(env.PORT, () => {
+    server.listen(env.PORT, () => {
       console.log(`\n🚀 Server is running on http://localhost:${env.PORT}`)
       console.log(
         `🧪 Socket.io Test Client available at http://localhost:${env.PORT}`,
       )
+      console.log(`📚 API Documentation available at http://localhost:${env.PORT}/api-docs`)
     })
   } catch (error) {
     console.error('Failed to start server:', error)
