@@ -24,6 +24,7 @@ export default defineConfig({
                 'src/index.ts',
                 'src/docs/**',
                 'tests/**',
+                'src/socket/**',
                 'src/sockets/**',
                 'src/models/**',
                 'src/utils/**',
