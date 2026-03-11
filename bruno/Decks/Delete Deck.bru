@@ -14,14 +14,19 @@ auth:bearer {
   token: {{token}}
 }
 
+vars:pre-request {
+  deckId: é
+  deckId: 2
+}
+
 docs {
   Delete a deck.
-
+  
   Requires authentication and deck ownership.
-
+  
   Variables needed:
   - deckId: The UUID of the deck to delete (get from Get My Decks response)
-
+  
   Returns:
   - 200: Deck deleted successfully
   - 401: Unauthorized

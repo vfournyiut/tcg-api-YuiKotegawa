@@ -28,9 +28,3 @@ export const authenticateToken = (req: Request<any, any, any>, res: Response, ne
         return res.status(401).json({error: "Invalid or expired token"});
     }
 };
-
-
-
-
-
-

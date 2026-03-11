@@ -1,0 +1,208 @@
+openapi: 3.1.0
+info:
+  title: TCG API Documentation
+  version: 1.0.0
+  description: |
+    API REST pour une application de gestion de cartes à collectionner de type Pokémon.
+    
+    **Fonctionnalités principales :**
+    - Authentification JWT
+    - Gestion des cartes Pokémon
+    - Création et gestion de decks personnalisés
+    
+  contact:
+    name: SENECHAL SCOTT
+    email: votre@email.com
+
+servers:
+  - url: http://localhost:3001
+    description: Serveur de développement
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Token JWT à obtenir via `/api/auth/sign-in` ou `/api/auth/sign-up`.
+        
+        **⚠️ IMPORTANT : Les tokens d'exemple dans la documentation ne fonctionnent PAS !**
+        **Vous DEVEZ créer un compte et obtenir un VRAI token.**
+        
+        **Comment l'utiliser :**
+        1. Utilisez `/api/auth/sign-up` ou `/api/auth/sign-in` pour obtenir un token
+        2. COPIEZ le token de la réponse (sans les guillemets)
+        3. Cliquez sur le bouton "Authorize" 🔓
+        4. COLLEZ votre token (PAS "Bearer", juste le token)
+        5. Cliquez sur "Authorize" puis "Close"
+
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - email
+        - username
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: Identifiant unique de l'utilisateur
+        email:
+          type: string
+          format: email
+          example: "blue@pokemon.com"
+          description: Adresse email de l'utilisateur
+        username:
+          type: string
+          example: "Blue"
+          description: Nom d'utilisateur
+
+    Card:
+      type: object
+      required:
+        - id
+        - name
+        - hp
+        - attack
+        - type
+        - pokedexNumber
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: Identifiant unique de la carte
+        name:
+          type: string
+          example: "Bulbasaur"
+          description: Nom du Pokémon
+        hp:
+          type: integer
+          example: 45
+          description: Points de vie
+        attack:
+          type: integer
+          example: 49
+          description: Points d'attaque
+        type:
+          type: string
+          enum:
+            - Normal
+            - Fire
+            - Water
+            - Electric
+            - Grass
+            - Ice
+            - Fighting
+            - Poison
+            - Ground
+            - Flying
+            - Psychic
+            - Bug
+            - Rock
+            - Ghost
+            - Dragon
+            - Dark
+            - Steel
+            - Fairy
+          example: "Grass"
+          description: Type du Pokémon
+        pokedexNumber:
+          type: integer
+          example: 1
+          description: Numéro du Pokédex
+        imgUrl:
+          type: string
+          nullable: true
+          example: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png"
+          description: URL de l'image du Pokémon
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-01-22T23:13:13.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-01-22T23:13:13.000Z"
+
+    Deck:
+      type: object
+      required:
+        - id
+        - name
+        - userId
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: Identifiant unique du deck
+        name:
+          type: string
+          example: "Mon deck eau"
+          description: Nom du deck
+        userId:
+          type: integer
+          example: 1
+          description: ID de l'utilisateur propriétaire
+
+    DeckWithCards:
+      allOf:
+        - $ref: '#/components/schemas/Deck'
+        - type: object
+          properties:
+            cards:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  deckId:
+                    type: integer
+                  cardId:
+                    type: integer
+              description: Liste des cartes du deck
+              minItems: 10
+              maxItems: 10
+
+    DeckSummary:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Mon deck eau"
+
+    AuthResponse:
+      type: object
+      required:
+        - token
+        - user
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          description: Token JWT valide 7 jours
+        user:
+          $ref: '#/components/schemas/User'
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Message d'erreur"
+
+tags:
+  - name: Authentication
+    description: Gestion de l'authentification et des comptes utilisateurs
+  - name: Cards
+    description: Consultation des cartes Pokémon disponibles
+  - name: Decks
+    description: Gestion des decks de cartes (nécessite authentification)
