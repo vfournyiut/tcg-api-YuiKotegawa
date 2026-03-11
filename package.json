@@ -1,9 +1,22 @@
 {
   "name": "template-tcg-api",
   "version": "1.0.0",
-  "author": "SENECHAL SCOTT",
   "description": "TCG Pokemon-like Backend Server",
+  "homepage": "https://github.com/vfournyiut/tcg-api-YuiKotegawa#readme",
+  "bugs": {
+    "url": "https://github.com/vfournyiut/tcg-api-YuiKotegawa/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vfournyiut/tcg-api-YuiKotegawa.git"
+  },
+  "license": "ISC",
+  "author": "SENECHAL SCOTT",
+  "type": "commonjs",
   "main": "dist/index.js",
+  "directories": {
+    "test": "tests"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc && node -e \"require('fs').cpSync('src/docs', 'dist/docs', {recursive: true, force: true, filter: (src) => src.endsWith('.yml') || require('path').basename(src) === 'docs'})\"",
